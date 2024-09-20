@@ -28,8 +28,12 @@ public class TaxiController {
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Taxi> taxiPage = taxiService.getTaxis(plate, pageable);
-        List<Taxi> taxiList = taxiPage.getContent();
 
+        if (taxiPage == null) {
+            // Manejar el caso donde taxiPage es null
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        List<Taxi> taxiList = taxiPage.getContent();
         return new ResponseEntity<>(taxiList, HttpStatus.OK);
     }
 }
