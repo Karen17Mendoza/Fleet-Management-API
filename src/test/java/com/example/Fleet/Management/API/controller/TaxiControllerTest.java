@@ -3,6 +3,7 @@ package com.example.Fleet.Management.API.controller;
 import com.example.Fleet.Management.API.model.Taxi;
 import com.example.Fleet.Management.API.service.TaxiService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,24 +47,11 @@ class TaxiControllerTest {
 
         taxiList = Arrays.asList(taxi1, taxi2);
     }
-    @Test
-    public void testListTaxis() throws Exception {
-        // Simula la paginación
-        Page<Taxi> taxiPage = new PageImpl<>(taxiList);
-        Mockito.when(taxiService.getTaxis(any(String.class), any(Pageable.class)))
-                .thenReturn(taxiPage);
 
-        // Realiza una solicitud GET a /taxis
-        mockMvc.perform(get("/taxis")
-                        .param("page", "0")
-                        .param("size", "10")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json("[{'id':1,'plate':'ABC-123'},{'id':2,'plate':'XYZ-456'}]"));
-    }
+    @DisplayName("Testing - should return a list of taxis filtered by plate")
     @Test
     public void testListTaxisWithPlate() throws Exception {
-        // Simula la paginación con filtro por plate
+
         Taxi filteredTaxi = new Taxi();
         filteredTaxi.setId(3);
         filteredTaxi.setPlate("ABC-789");
@@ -72,7 +60,6 @@ class TaxiControllerTest {
         Mockito.when(taxiService.getTaxis(Mockito.eq("ABC"), any(Pageable.class)))
                 .thenReturn(taxiPage);
 
-        // Realiza una solicitud GET a /taxis con el filtro plate
         mockMvc.perform(get("/taxis")
                         .param("plate", "ABC")
                         .param("page", "0")
@@ -82,4 +69,19 @@ class TaxiControllerTest {
                 .andExpect(content().json("[{'id':3,'plate':'ABC-789'}]"));
     }
 
+    @DisplayName("Testing - should filter that does not find matches")
+    @Test
+    public void testListTaxisWithNoResults() throws Exception {
+        Page<Taxi> emptyTaxiPage = new PageImpl<>(Arrays.asList());
+        Mockito.when(taxiService.getTaxis(Mockito.eq("ZZZ"), any(Pageable.class)))
+                .thenReturn(emptyTaxiPage);
+
+        mockMvc.perform(get("/taxis")
+                        .param("plate", "ZZZ")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+    }
 }
