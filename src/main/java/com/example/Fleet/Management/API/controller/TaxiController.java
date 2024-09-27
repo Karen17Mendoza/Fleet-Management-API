@@ -24,9 +24,9 @@ public class TaxiController {
     public ResponseEntity<List<Taxi>> listTaxis(
             @RequestParam(required = false) String plate,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int limit
     ) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, limit);
         Page<Taxi> taxiPage = taxiService.getTaxis(plate, pageable);
 
         if (taxiPage == null) {
