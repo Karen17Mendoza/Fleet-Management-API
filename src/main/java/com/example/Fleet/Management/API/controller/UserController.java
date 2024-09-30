@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -61,9 +63,20 @@ public class UserController {
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-
-
     }
 
+    //Creamos el endpoint para actualizar un usuario existente
+    @PutMapping("/{uid}")
+    public ResponseEntity<Object> updateUser(@PathVariable String uid, @RequestBody User newUserInfo) {
+        // Llamamos al servicio para actualizar el usuario
+        Optional<User> updatedUser = userService.updateUser(uid, newUserInfo);
 
+        if (updatedUser.isPresent()) {
+            User user = updatedUser.get();
+            UserResponse userResponse = new UserResponse(user.getId(), user.getName(), user.getEmail());
+            return new ResponseEntity<>(userResponse, HttpStatus.OK);
+        } else {
+            return ErrorResponseHandler.generateErrorResponse("User not found", HttpStatus.NOT_FOUND);
+        }
+    }
 }
