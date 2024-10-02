@@ -17,10 +17,10 @@ public class User {
     @Column(nullable = false, unique = true)
     private  String email;
 
-    @JsonIgnore
+    //@JsonIgnore
     @Column(nullable = false)
     private String password;
-
+    
     //Getters y Setters
 
     public Integer getId() {

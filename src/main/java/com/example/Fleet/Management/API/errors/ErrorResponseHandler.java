@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 
 public class ErrorResponseHandler {
 
-    // Método para generar respuestas de error
     public static ResponseEntity<Object> generateErrorResponse(String errorMessage, HttpStatus status) {
         return new ResponseEntity<>(new ErrorResponse(errorMessage), status);
     }
