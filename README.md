@@ -19,9 +19,18 @@
 - **Spring Boot**
 - **Spring Security (JWT)**
 - **Hibernate (JPA)**
-- **MySQL** (o cualquier base de datos relacional compatible)
+- **PostgreSQL** (o cualquier base de datos relacional compatible)
 - **Maven** para la gestión de dependencias.
+  
+### Endpoints Principales
 
+- /taxis: listado de taxis.
+- /trajectories: historial de ubicaciones.
+- /trajectories/latest: última ubicación.
+- /users: gestión de usuarios(CRUD)
+- /auth/signup: registro de nuevo usuario.
+- /auth/login: Autenticación de usuarios.
+  
 ### Instalación
 
 1. Clonar el repositorio:
