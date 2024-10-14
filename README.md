@@ -36,4 +36,4 @@
 1. Clonar el repositorio:
 
    ```bash
-   git clone https://github.com/tuusuario/fleet-management-api.git
+   git clone https://github.com/Karen17Mendoza/Fleet-Management-API.git
