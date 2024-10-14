@@ -1,28 +1,26 @@
 package com.example.Fleet.Management.API.response;
 
 public class LoginResponse {
-    private String token;
+    private String accessToken;
+    private UserResponse user;
 
-    private long expiresIn;
-
-    public String getToken() {
-        return token;
+    // Getter y setter para accessToken
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    // Getters and setters...
-    public LoginResponse setToken(String token) {
-        this.token = token;
+    public LoginResponse setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
         return this;
     }
 
-    public long getExpiresIn() {
-        return expiresIn;
+    // Getter y setter para user
+    public UserResponse getUser() {
+        return user;
     }
 
-    public LoginResponse setExpiresIn(long expiresIn) {
-        this.expiresIn = expiresIn;
+    public LoginResponse setUser(UserResponse user) {
+        this.user = user;
         return this;
     }
-
-
 }
