@@ -7,9 +7,9 @@
 ### Características
 
 - Autenticación y autorización mediante JWT.
-- Gestión de vehículos: agregar, actualizar, eliminar y obtener información detallada.
-- Gestión de conductores: registro, actualización y asignación a vehículos.
-- Gestión de rutas y tareas de mantenimiento.
+- Gestión de vehículos: obtener información detallada.
+- Gestión de usuarios: registro, actualización y eliminacion.
+- Gestión de trayectorias.
 - Soporte para registros de mantenimiento y alertas de vencimientos.
 - Manejo global de excepciones para proporcionar respuestas claras de errores.
 
