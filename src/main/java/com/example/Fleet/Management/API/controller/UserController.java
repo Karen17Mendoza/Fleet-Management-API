@@ -39,7 +39,7 @@ public class UserController {
                 createdUser.getEmail()
         );
 
-        return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 
     //Creamos el endpoint para la obtencion de usuarios
@@ -87,13 +87,18 @@ public class UserController {
                     "User not found", HttpStatus.NOT_FOUND);
         }
     }
-    //Creamos el endpoint
     @DeleteMapping("/{uid}")
     public ResponseEntity<Object> deleteUser(@PathVariable String uid) {
-        boolean isDelete = userService.deleteUser(uid);
+        Optional<User> deletedUser = userService.deleteUser(uid);
 
-        if (isDelete) {
-            return new ResponseEntity<>("User successfully deleted", HttpStatus.OK);
+        if (deletedUser.isPresent()) {
+            User user = deletedUser.get(); // Obtenemos el usuario eliminado
+            UserResponse userResponse = new UserResponse(
+                    user.getId(),
+                    user.getName(),
+                    user.getEmail()
+            );
+            return new ResponseEntity<>(userResponse, HttpStatus.OK);
         } else {
             return ErrorResponseHandler.generateErrorResponse(
                     "User not found", HttpStatus.NOT_FOUND);

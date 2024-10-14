@@ -53,23 +53,23 @@ public class UserService {
     }
 
     //Metodo para eliminar un usuario existente
-    public boolean deleteUser(String uid) {
+    public Optional<User> deleteUser(String uid) {
         Optional<User> userOptional;
 
-        try{
-            //Intrpretamos el uid como un numero (ID)
+        try {
+            // Interpretamos el uid como un número (ID)
             Integer id = Integer.parseInt(uid);
             userOptional = userRepository.findById(id);
         } catch (NumberFormatException e) {
-            //Si no es numero lo interpretamos como email
+            // Si no es número, lo interpretamos como email
             userOptional = userRepository.findByEmail(uid);
         }
 
         if (userOptional.isPresent()) {
-            userRepository.delete(userOptional.get()); //Eliminamos el usuario
-            return true; // Retornamos true si se elimino correctamente
+            userRepository.delete(userOptional.get()); // Eliminamos el usuario
+            return userOptional; // Retornamos el usuario eliminado
         } else {
-            return false; // Retornamos false si el usuario no existe
+            return Optional.empty(); // Retornamos vacío si no se encuentra el usuario
         }
     }
 
