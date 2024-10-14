@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -22,19 +24,15 @@ public class UserController {
     //Creamos el endpoint para crear el usuario
     @PostMapping
     public ResponseEntity<Object> createUser(@RequestBody User user) {
-        //Verificamos si el email y el password esten presentes
-        if ( user.getEmail() == null || user.getEmail().isEmpty() ||
+        if (user.getEmail() == null || user.getEmail().isEmpty() ||
                 user.getPassword() == null || user.getPassword().isEmpty()) {
 
-            //Usamos el manejador de errores
             return ErrorResponseHandler.generateErrorResponse(
-                    "string",
+                    "Email and password are required",
                     HttpStatus.BAD_REQUEST
             );
         }
-        //Creamos el usuario
         User createdUser = userService.createUser(user);
-        //Devolvemos la respuesta sin el pasword
         UserResponse userResponse = new UserResponse(
                 createdUser.getId(),
                 createdUser.getName(),
@@ -47,36 +45,59 @@ public class UserController {
     //Creamos el endpoint para la obtencion de usuarios
     @GetMapping
     public ResponseEntity<Object> getUsers(
-        @RequestParam(defaultValue = "1") int page,
-        @RequestParam(defaultValue = "10") int limit) {
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int limit) {
 
-        //Validamos los valores de page y limit
         if (page < 1 || limit < 1) {
-            return ErrorResponseHandler.generateErrorResponse("nvalid page or limit", HttpStatus.BAD_REQUEST);
-
+            return ErrorResponseHandler.generateErrorResponse(
+                    "Invalid page or limit", HttpStatus.BAD_REQUEST);
         }
 
         Page<User> userPage = userService.getUsers(page, limit);
-        //Verificamos que la pagina tiene contenido
         if (userPage.hasContent()) {
-            return new ResponseEntity<>(userPage.getContent(), HttpStatus.OK);
+            // Convertimos los usuarios a UserResponse
+            List<UserResponse> userResponses = userPage.getContent()
+                    .stream()
+                    .map(user -> new UserResponse(
+                            user.getId(),
+                            user.getName(),
+                            user.getEmail()))
+                    .collect(Collectors.toList());
+
+            return new ResponseEntity<>(userResponses, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
-
     //Creamos el endpoint para actualizar un usuario existente
-    @PutMapping("/{uid}")
+    @PatchMapping ("/{uid}")
     public ResponseEntity<Object> updateUser(@PathVariable String uid, @RequestBody User newUserInfo) {
         // Llamamos al servicio para actualizar el usuario
         Optional<User> updatedUser = userService.updateUser(uid, newUserInfo);
 
         if (updatedUser.isPresent()) {
             User user = updatedUser.get();
-            UserResponse userResponse = new UserResponse(user.getId(), user.getName(), user.getEmail());
+            UserResponse userResponse = new UserResponse(
+                    user.getId(),
+                    user.getName(),
+                    user.getEmail());
             return new ResponseEntity<>(userResponse, HttpStatus.OK);
         } else {
-            return ErrorResponseHandler.generateErrorResponse("User not found", HttpStatus.NOT_FOUND);
+            return ErrorResponseHandler.generateErrorResponse(
+                    "User not found", HttpStatus.NOT_FOUND);
         }
     }
+    //Creamos el endpoint
+    @DeleteMapping("/{uid}")
+    public ResponseEntity<Object> deleteUser(@PathVariable String uid) {
+        boolean isDelete = userService.deleteUser(uid);
+
+        if (isDelete) {
+            return new ResponseEntity<>("User successfully deleted", HttpStatus.OK);
+        } else {
+            return ErrorResponseHandler.generateErrorResponse(
+                    "User not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

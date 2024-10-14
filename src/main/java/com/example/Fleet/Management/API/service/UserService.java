@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
@@ -33,7 +32,6 @@ public class UserService {
     //Metodo para actualiar un usuario
     public Optional<User> updateUser(String uid, User newUserInfo) {
         //Buscamos por id o email al usuario existente
-        // Verificamos si el UID es un número (ID) o un email
         Optional<User> userOptional;
         try {
             Integer id = Integer.parseInt(uid);
@@ -48,10 +46,30 @@ public class UserService {
             user.setName(newUserInfo.getName());
             user.setEmail(newUserInfo.getEmail());
 
-            // Aquí puedes agregar lógica para manejar otras actualizaciones, pero no incluyas el password si no es necesario
             return Optional.of(userRepository.save(user));
         } else {
             return Optional.empty();
+        }
+    }
+
+    //Metodo para eliminar un usuario existente
+    public boolean deleteUser(String uid) {
+        Optional<User> userOptional;
+
+        try{
+            //Intrpretamos el uid como un numero (ID)
+            Integer id = Integer.parseInt(uid);
+            userOptional = userRepository.findById(id);
+        } catch (NumberFormatException e) {
+            //Si no es numero lo interpretamos como email
+            userOptional = userRepository.findByEmail(uid);
+        }
+
+        if (userOptional.isPresent()) {
+            userRepository.delete(userOptional.get()); //Eliminamos el usuario
+            return true; // Retornamos true si se elimino correctamente
+        } else {
+            return false; // Retornamos false si el usuario no existe
         }
     }
 
