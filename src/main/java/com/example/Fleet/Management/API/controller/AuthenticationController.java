@@ -42,6 +42,13 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto) {
+        // Verificar que el email y la contraseña no sean nulos o vacíos
+        if (loginUserDto.getEmail() == null || loginUserDto.getEmail().isEmpty()) {
+            throw new IllegalArgumentException("Email is required");
+        }
+        if (loginUserDto.getPassword() == null || loginUserDto.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("Password is required");
+        }
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
 
         // Generar el token JWT

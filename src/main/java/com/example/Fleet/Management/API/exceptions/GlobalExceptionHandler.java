@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR; // Default to 500
 
         if (exception instanceof BadCredentialsException) {
-            status = HttpStatus.UNAUTHORIZED;  // 401
+            status = HttpStatus.NOT_FOUND;  // 404
             errorResponse.put("error", "The username or password is incorrect");
         } else if (exception instanceof AccountStatusException) {
             status = HttpStatus.FORBIDDEN;  // 403
@@ -44,5 +44,14 @@ public class GlobalExceptionHandler {
 
         // Devolver una ResponseEntity con el mapa de error y el estado HTTP correspondiente
         return new ResponseEntity<>(errorResponse, status);
+    }
+
+    // Manejo específico de credenciales faltantes o inválidas
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException exception) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", exception.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);  // 400
     }
 }
