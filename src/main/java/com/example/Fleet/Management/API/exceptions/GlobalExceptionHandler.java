@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
         exception.printStackTrace();
 
         Map<String, String> errorResponse = new HashMap<>();
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR; // Default to 500
+        HttpStatus status = HttpStatus.UNAUTHORIZED; // Default to 401
 
         if (exception instanceof BadCredentialsException) {
             status = HttpStatus.NOT_FOUND;  // 404
@@ -52,6 +52,6 @@ public class GlobalExceptionHandler {
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("error", exception.getMessage());
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);  // 400
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);  // 400git
     }
 }
